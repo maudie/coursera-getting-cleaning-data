@@ -86,9 +86,39 @@ df <- rbind(df_test, df_train)
 ## Write out the tidy data
 
 # Write out complete dataset
-write.table(df, file="tidy_data.csv", sep=",", row.names = FALSE) 
+write.table(df, file="tidy_data.csv", sep=",", row.names = FALSE)
 
 ###################################
 ## Compute summary statistics
 
-# Compute Summary dataset with average of each variable by activity and subject
+# Compute summary dataset using dplyr to compute the average of
+# each subject/activity combination for each variable
+summary_stats <- data.frame()
+
+# Loop to preserve all the meaningful column names in the new
+# mean columns
+for (name in names(df)[4:length(df)]) {
+	print(paste('name is ', name))
+	var_column_label <- paste(name,"_mean", sep="")
+	print(paste('var_column_label is ',name))
+	
+	# compute the mean for this variable
+	var_mean_df <- ddply(df, .(Subject, Activity), summarize, mean = colMeans(df[name]))
+	# var_mean_df <- ddply(df, .(Subject, Activity), summarize, mean = mean(name))
+	print('mean computed')
+	
+	# rename the column before adding it to the data frame
+	var_mean_df_rename <- rename(var_mean_df, replace=c('mean' = var_column_label))
+	
+	if (empty(summary_stats)) {
+		summary_stats <- var_mean_df_rename	
+		print('empty')
+	} else {
+		summary_stats[var_column_label] <- var_mean_df_rename[3]	
+		print('not empty')	
+	}	
+	i = i + 1
+}
+
+# Write out summary stats data
+write.table(summary_stats, file="summary_stats.csv", sep=",", row.names = FALSE)
