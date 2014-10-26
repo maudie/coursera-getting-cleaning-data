@@ -15,10 +15,10 @@ Unzip the source data, and run the run_analysis.R script in the directory where 
 
 The output will be two files: 'tidy_data.csv' and 'summary_stats.csv'
 
-tidy_data.csv
+train_test_combined.csv
 ---
 
-This file combines all test and training data.
+This file combines all test and training data into a single table.
 
 Column names for tidy_data.csv are:
 
